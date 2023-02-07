@@ -7,23 +7,8 @@ import streamlit_nested_layout
 from streamlit.components.v1 import html
 from streamlit_webrtc import webrtc_streamer
 
+from connection import Connection
 from visualize import JankoHrasko
-
-
-def move_fwd():
-    print('Move FWD')
-
-
-def move_bwd():
-    print('Move BWD')
-
-
-def move_left():
-    print('Move LEFT')
-
-
-def move_right():
-    print('Move RIGHT')
 
 
 def video_callback(frame):
@@ -34,6 +19,10 @@ def video_callback(frame):
 st.set_page_config(layout='wide')
 st.title('Janko Hraško Controller')
 
+if 'conn' not in st.session_state:
+    st.session_state['conn'] = Connection()
+
+conn = st.session_state['conn']
 col_1, col_2, col_3 = st.columns(3)
 
 with col_1:
@@ -53,15 +42,15 @@ with col_1:
 
         if submit:
             st.session_state['effector_coords'] = (slider_x, slider_y, slider_z)
-            send_coords()
+            conn.send_coords(st.session_state['effector_coords'])
 
     with col_b2:
         btn_container = st.empty()
-        grab = btn_container.button('Grab', on_click=grip)
+        grab = btn_container.button('Grab', on_click=conn.grip)
 
         if grab:
             btn_container.empty()
-            grab = btn_container.button('Release', on_click=release)
+            grab = btn_container.button('Release', on_click=conn.release)
 
     with st.expander('Precise control'):
         with st.form(key='effector'):
@@ -82,20 +71,20 @@ with col_1:
 
             if submit:
                 st.session_state['effector_coords'] = (coord_x, coord_y, coord_z)
-                send_coords()
+                conn.send_coords(st.session_state['effector_coords'])
 
     st.subheader('Base movement')
 
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 
     with col_m1:
-        st.button('🠕', on_click=move_fwd)
+        st.button('🠕', on_click=conn.move_fwd)
     with col_m2:
-        st.button('🠗', on_click=move_bwd)
+        st.button('🠗', on_click=conn.move_bwd)
     with col_m3:
-        st.button('🠔', on_click=move_left)
+        st.button('🠔', on_click=conn.move_left)
     with col_m4:
-        st.button('🠖', on_click=move_right)
+        st.button('🠖', on_click=conn.move_right)
 
     html(
         """
@@ -147,7 +136,8 @@ if 'joint_config' not in st.session_state:
     )
     st.session_state['arm_fig'] = plt.gcf()
 
-q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
+# q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
+q = conn.get_joint_config()
 
 if q != st.session_state['joint_config']:
     st.session_state['joint_config'] = q
