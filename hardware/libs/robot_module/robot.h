@@ -208,6 +208,18 @@ public:
         return servoActualPositions;
     }
 
+
+    double* getServoActualPositionsInDegrees() {
+        auto* servoActualPositions = new double[5];
+        servoActualPositions[0] = servos[0]->conversion_signal_value_to_degrees(servos[0]->get_akt_signal_value());
+        servoActualPositions[1] = servos[1]->conversion_signal_value_to_degrees(servos[1]->get_akt_signal_value());
+        servoActualPositions[2] = servos[2]->conversion_signal_value_to_degrees(servos[2]->get_akt_signal_value());
+        servoActualPositions[3] = servos[3]->conversion_signal_value_to_degrees(servos[3]->get_akt_signal_value());
+        servoActualPositions[4] = servos[4]->conversion_signal_value_to_degrees(servos[4]->get_akt_signal_value());
+
+        return servoActualPositions;
+    }
+
     bool setServo_i_degrees(int i, double degrees);
 
     const MyPoint ForwardKinematics(double x = 0, double y = 0, double z = 0) {
