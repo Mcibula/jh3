@@ -39,24 +39,50 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.subheader('Effector position')
 
+    if 'effector_coords' not in st.session_state:
+        st.session_state['effector_coords'] = (0, 0, 0)
+
     slider_x = st.slider('X')
     slider_y = st.slider('Y')
     slider_z = st.slider('Z')
 
-    btn_container = st.empty()
-    grab = btn_container.button('Grab')
+    colb1, colb2 = st.columns(2)
 
-    if grab:
-        btn_container.empty()
-        grab = btn_container.button('Release')
+    with colb1:
+        submit = st.button('Execute')
+
+        if submit:
+            st.session_state['effector_coords'] = (slider_x, slider_y, slider_z)
+            send_coords()
+
+    with colb2:
+        btn_container = st.empty()
+        grab = btn_container.button('Grab', on_click=grip)
+
+        if grab:
+            btn_container.empty()
+            grab = btn_container.button('Release', on_click=release)
 
     with st.expander('Precise control'):
-        with st.form(key='effector_coords'):
-            coord_x = st.number_input('X', value=slider_x)
-            coord_y = st.number_input('Y', value=slider_y)
-            coord_z = st.number_input('Z', value=slider_z)
+        with st.form(key='effector'):
+            coord_x = st.number_input(
+                'X',
+                value=slider_x
+            )
+            coord_y = st.number_input(
+                'Y',
+                value=slider_y
+            )
+            coord_z = st.number_input(
+                'Z',
+                value=slider_z
+            )
 
             submit = st.form_submit_button(label='Execute')
+
+            if submit:
+                st.session_state['effector_coords'] = (coord_x, coord_y, coord_z)
+                send_coords()
 
     st.subheader('Base movement')
 
