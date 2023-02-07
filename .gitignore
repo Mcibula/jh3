@@ -128,5 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# IDEA folder
+# Custom directories and files
 .idea/
+cmake-build-debug/
