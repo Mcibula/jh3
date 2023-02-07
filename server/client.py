@@ -34,9 +34,9 @@ def video_callback(frame):
 st.set_page_config(layout='wide')
 st.title('Janko Hraško Controller')
 
-col1, col2, col3 = st.columns(3)
+col_1, col_2, col_3 = st.columns(3)
 
-with col1:
+with col_1:
     st.subheader('Effector position')
 
     if 'effector_coords' not in st.session_state:
@@ -46,16 +46,16 @@ with col1:
     slider_y = st.slider('Y')
     slider_z = st.slider('Z')
 
-    colb1, colb2 = st.columns(2)
+    col_b1, col_b2 = st.columns(2)
 
-    with colb1:
+    with col_b1:
         submit = st.button('Execute')
 
         if submit:
             st.session_state['effector_coords'] = (slider_x, slider_y, slider_z)
             send_coords()
 
-    with colb2:
+    with col_b2:
         btn_container = st.empty()
         grab = btn_container.button('Grab', on_click=grip)
 
@@ -86,15 +86,15 @@ with col1:
 
     st.subheader('Base movement')
 
-    col11, col12, col13, col14 = st.columns(4)
+    col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 
-    with col11:
+    with col_m1:
         st.button('🠕', on_click=move_fwd)
-    with col12:
+    with col_m2:
         st.button('🠗', on_click=move_bwd)
-    with col13:
+    with col_m3:
         st.button('🠔', on_click=move_left)
-    with col14:
+    with col_m4:
         st.button('🠖', on_click=move_right)
 
     html(
@@ -162,10 +162,10 @@ if q != st.session_state['joint_config']:
     )
     st.session_state['arm_fig'] = plt.gcf()
 
-with col2:
+with col_2:
     st.subheader('Arm position')
     st.pyplot(st.session_state['arm_fig'])
 
-with col3:
+with col_3:
     st.subheader('Camera')
     webrtc_streamer(key='camera', video_frame_callback=video_callback)
