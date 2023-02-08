@@ -1,11 +1,11 @@
-import numpy as np
+import math
+
 from roboticstoolbox import DHRobot, RevoluteDH
-import roboticstoolbox as rbt
 
 
 class JankoHrasko(DHRobot):
     def __init__(self, **kwargs):
-        deg = np.pi / 180
+        deg = math.pi / 180
 
         L1 = RevoluteDH(
             a=0,
@@ -58,8 +58,8 @@ if __name__ == '__main__':
     robot = JankoHrasko()
     print(robot)
 
-    deg = np.pi / 180
-    q = np.array([0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg])
+    deg = math.pi / 180
+    q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
 
     print(robot.islimit(q))
     robot.plot(
