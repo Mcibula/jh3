@@ -434,7 +434,7 @@ string RoboticArm::sendServoPacket(char co, int index) {
 
     if (co == 's') {
         if ((index < 0) || (index > 4)) {
-            return '\0';
+            return "";
         }
 
         result << ".s";
@@ -529,7 +529,7 @@ string Robot::sendMotorPacket(char co, int index) {
 
     if (co == 'm') {
         if ((index < 0) || (index > 3)) {
-            return '\0';
+            return "";
         }
 
         result << ".m";
