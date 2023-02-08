@@ -2,9 +2,13 @@
 #include <string>
 #include "libs/robot_libs.h"
 
-std::string port;
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        return 1;
+    }
 
-int main() {
+    std::string port = argv[1];
+
     // Robot initialization
     auto *robot = new Robot();
     int fd = robot->initConnection(port);

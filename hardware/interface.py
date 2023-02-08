@@ -4,12 +4,14 @@ import pexpect
 
 
 class Interface:
-    def __init__(self) -> None:
+    def __init__(self, port: str) -> None:
         """
         Interface communicates with the wrapper of a robot
+
+        :param port: Communication port with the main circuit
         """
 
-        self.wrapper = pexpect.spawn('./wrapper.exe')
+        self.wrapper = pexpect.spawn(f'./wrapper {port}')
 
     def send_command(self, command: str) -> None:
         """
