@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)                            
-PROJECT(build/jh3)
+PROJECT(jh3)
 
 FIND_PACKAGE( OpenCV REQUIRED ) 
 FIND_PACKAGE( CURL REQUIRED )                             
@@ -21,6 +21,6 @@ SET(SOURCE_FILES
 	libs/robot_motion_module/robot_motion_helper.h
 )
 
-ADD_EXECUTABLE(build/jh3 ${SOURCE_FILES})
-TARGET_LINK_LIBRARIES (build/jh3 ${OpenCV_LIBS})
-TARGET_LINK_LIBRARIES (build/jh3 ${CURL_LIBRARIES})
+ADD_EXECUTABLE(jh3 ${SOURCE_FILES})
+TARGET_LINK_LIBRARIES (jh3 ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES (jh3 ${CURL_LIBRARIES})
