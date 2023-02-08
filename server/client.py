@@ -1,19 +1,14 @@
 import math
 
-import av
+import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 import streamlit_nested_layout
 from streamlit.components.v1 import html
-from streamlit_webrtc import webrtc_streamer
+from vidgear.gears import NetGear
 
 from connection import Connection
 from visualize import JankoHrasko
-
-
-def video_callback(frame):
-    img = frame.to_ndarray(format='bgr24')
-    return av.VideoFrame.from_ndarray(img, format='bgr24')
 
 
 st.set_page_config(layout='wide')
@@ -21,6 +16,23 @@ st.title('Janko Hraško Controller')
 
 if 'conn' not in st.session_state:
     st.session_state['conn'] = Connection()
+
+if 'video_stream' not in st.session_state:
+    options = {
+        # 'multiclient_mode': True,
+        'request_timeout': 60,
+        'max_retries': 20
+    }
+
+    st.session_state['video_stream'] = NetGear(
+        # address='127.0.0.1',
+        # port='65433',
+        # protocol='tcp',
+        receive_mode=True,
+        # pattern=1,
+        logging=True,
+        **options
+    )
 
 conn = st.session_state['conn']
 col_1, col_2, col_3 = st.columns(3)
@@ -139,7 +151,7 @@ if 'joint_config' not in st.session_state:
 # q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
 q = conn.get_joint_config()
 
-if q != st.session_state['joint_config']:
+if q and q != st.session_state['joint_config']:
     st.session_state['joint_config'] = q
 
     st.session_state['robot'].plot(
@@ -158,4 +170,12 @@ with col_2:
 
 with col_3:
     st.subheader('Camera')
-    webrtc_streamer(key='camera', video_frame_callback=video_callback)
+    viewer = st.image(np.random.randint(0, 100, size=(32, 32)), width=600)
+
+    while True:
+        frame = st.session_state['video_stream'].recv()
+
+        if frame is None:
+            frame = np.random.randint(0, 100, size=(64, 64))
+
+        viewer.image(frame, width=600)
