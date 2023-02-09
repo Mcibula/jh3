@@ -29,7 +29,7 @@ if 'video_stream' not in st.session_state:
         # port='65433',
         # protocol='tcp',
         receive_mode=True,
-        # pattern=1,
+        pattern=2,
         logging=True,
         **options
     )
