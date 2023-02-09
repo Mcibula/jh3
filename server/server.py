@@ -4,20 +4,48 @@ import socket
 import threading
 from typing import Tuple
 
+from hardware.interface import Interface
+
 
 class ThreadedServer:
-    def __init__(self, host: str = '127.0.0.1', port: int = 65432) -> None:
+    def __init__(
+            self,
+            host: str = '127.0.0.1',
+            port: int = 65432,
+            hw_port: str = '/dev/ttyUSB0'
+    ) -> None:
         """
         Multithreaded TCP socket server serving multiple clients
 
         :param host: IP of the server
         :param port: Serving port
+        :param hw_port: Port to the serial converter of the robot
         """
+
+        print('Starting server...')
 
         # Initialize socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((host, port))
+
+        # Connect to the robot
+        print('Initializing hardware interface...')
+        self.hardware = Interface(hw_port)
+
+        # Function calls without parameters
+        self.calls = {
+            'base_fwd': self.hardware.forward,
+            'base_bwd': self.hardware.backward,
+            'base_left': self.hardware.turn_left,
+            'base_right': self.hardware.turn_right,
+            'effector_grip': self.hardware.grab,
+            'effector_release': self.hardware.release,
+        }
+
+        # Default joint configuration
+        deg = math.pi / 180
+        self.joint_config = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
 
     def listen(self) -> None:
         """
@@ -39,8 +67,7 @@ class ThreadedServer:
                 args=(conn, addr)
             ).start()
 
-    @staticmethod
-    def receive(conn: socket.socket, addr: Tuple[str, int]) -> bool:
+    def receive(self, conn: socket.socket, addr: Tuple[str, int]) -> bool:
         """
         Receive and/or send data
 
@@ -57,13 +84,26 @@ class ThreadedServer:
 
                 # If there is some data
                 if data:
-                    print(data.decode())
+                    print(f'Received "{data.decode()}"')
 
-                # If `get_joint_config` request is received
-                if data.decode() == 'get_joint_config':
-                    # Send back new data
-                    deg = math.pi / 180
-                    conn.sendall(pickle.dumps([0 * deg, 0 * deg, 0 * deg, 45 * deg, 80 * deg, 0 * deg]))
+                    # Decode received command
+                    cmd = data.decode().split()
+                    func = cmd[0]
+
+                    if func == 'move_arm':
+                        # If `move_arm` request is received
+                        # Extract coordinates and execute while receiving a new joint config
+                        x, y, z = map(int, cmd[1:])
+                        self.joint_config = self.hardware.move_arm(x, y, z)
+
+                    elif func == 'get_joint_config':
+                        # If `get_joint_config` request is received
+                        # Send back a new joint config
+                        conn.sendall(pickle.dumps(self.joint_config))
+
+                    elif func in self.calls:
+                        # Execute without parameters
+                        self.calls[func]()
 
             except socket.timeout:
                 # In case of time out
@@ -76,4 +116,5 @@ class ThreadedServer:
 
 
 if __name__ == '__main__':
+    # Start the server
     ThreadedServer().listen()
