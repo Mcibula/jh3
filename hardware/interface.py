@@ -62,7 +62,7 @@ class Interface:
         """
 
         self.send_command(f'moveArm {x} {y} {z}')
-        self.wrapper.expect('o ')
+        self.wrapper.expect('Servo angles')
         output = self.wrapper.readline().decode().split()
 
         return list(map(float, output))

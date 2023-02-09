@@ -349,7 +349,7 @@ void RobotMotion::moveArm(cv::Point3i fromPoint, cv::Point3i toPoint, Robot* rob
 
         if (inverseResult) {
             int numSteps = getDistance(path[i - 1], path[i]) / 5;
-            cout << "numSteps" << numSteps << endl;
+            cout << "numSteps " << numSteps << endl;
             slowlyMoveArm(prevArm, nextArm, fd, numSteps);
         }
     }

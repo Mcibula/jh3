@@ -29,13 +29,10 @@ int main(int argc, char *argv[]) {
     while (true) {
         command = "";
 
-        // Chars "i" / "o" tell python interface what to expect
+        // Char "i" tell python interface what to expect
         // Input
         std::cout << "i ";
         std::cin >> command;
-
-        // Output
-        std::cout << "o ";
 
         if (command == "forward") {
             robotMotion.moveFWD(robot, fd);
@@ -58,16 +55,18 @@ int main(int argc, char *argv[]) {
             // Moves the robotic arm and updates the current effector position
             robotMotion.moveArm(current_effector_position, next_effector_position, robot, fd);
             current_effector_position = next_effector_position;
-
+            
             // Gets angles of all joints in the robot's arm
-            double* servos = robot->getRoboticArm()->getServoActualPositionsInDegrees();
-
+            double* servos_degrees = robot->getRoboticArm()->getServoActualPositionsInDegrees();
+            
             // Puts the angles to one string separated by spaces
             std::string servo_angles;
-            for (int i = 0; i < 5; ++i) {
-                servo_angles += to_string(servos[i]) + " ";
+
+            std::cout << "Servo angles";
+            for (int i = 0; i < 5; i++) {
+                std::cout << servos_degrees[i] << " ";
             }
-            std::cout << servo_angles;
+            std::cout << endl;
         }
         else if (command == "grab") {
             robotMotion.grip(robot, fd, 10);
