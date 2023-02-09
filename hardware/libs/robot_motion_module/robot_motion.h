@@ -50,6 +50,9 @@ public:
     void turnLeft(Robot* robot, int fd, int timeInMilis);
     void turnRight(Robot* robot, int fd);
     void turnRight(Robot* robot, int fd, int timeInMilis);
+    
+    vector<cv::Point3i> calculatePath(cv::Point3i fromPoint, cv::Point3i toPoint);
+    double getDistance(cv::Point3i p1, cv::Point3i p2);
 private:
     void stop(Robot* robot, int fd);
 
@@ -57,8 +60,6 @@ private:
     TestPathResult testPath(cv::Point3i p1, cv::Point3i p2, Block b);
     cv::Point3i alignPositionMidPoint(cv::Point3i p);
     vector<cv::Point3i> getPath(cv::Point3i& fromPoint, cv::Point3i& toPoint); //recursive function
-    vector<cv::Point3i> calculatePath(cv::Point3i fromPoint, cv::Point3i toPoint);
-    double getDistance(cv::Point3i p1, cv::Point3i p2);
     void slowlyMoveArm(int* prevArm, int* nextArm, int fd, int numSteps);
 };
 

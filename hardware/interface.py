@@ -23,33 +23,41 @@ class Interface:
         self.wrapper.expect('i ')
         self.wrapper.sendline(command)
 
-    def forward(self) -> None:
+    def forward(self, time: int = 130) -> None:
         """
-        Robot goes forwards a bit
-        """
-
-        self.send_command('forward')
-
-    def backward(self) -> None:
-        """
-        Robot goes backwards a bit
+        Robot goes forwards for a time from input
+        
+        :param time: Time to send
         """
 
-        self.send_command('backward')
+        self.send_command(f'forward {abs(time)}')
 
-    def turn_right(self) -> None:
+    def backward(self, time: int = 130) -> None:
         """
-        Robot turns right a bit
-        """
-
-        self.send_command('right')
-
-    def turn_left(self) -> None:
-        """
-        Robot turns left a bit
+        Robot goes backwards for a time from input
+        
+        :param time: Time to send
         """
 
-        self.send_command('left')
+        self.send_command(f'backward {abs(time)}')
+
+    def turn_right(self, time: int = 260) -> None:
+        """
+        Robot turns right for a time from input
+        
+        :param time: Time to send
+        """
+
+        self.send_command(f'right {abs(time)}')
+
+    def turn_left(self, time: int = 260) -> None:
+        """
+        Robot turns left for a time from input
+        
+        :param time: Time to send
+        """
+
+        self.send_command(f'left {abs(time)}')
 
     def move_arm(self, x: int, y: int, z: int) -> List[float]:
         """
@@ -59,6 +67,7 @@ class Interface:
         :param y: Effector Y-axis coordinate
         :param z: Effector Z-axis coordinate
         :return: List of floats - angles of each joint in robotic arm
+        after it finished all movements
         """
 
         self.send_command(f'moveArm {x} {y} {z}')
@@ -67,12 +76,14 @@ class Interface:
 
         return list(map(float, output))
 
-    def grab(self) -> None:
+    def grab(self, width: int = 15) -> None:
         """
-        Robot closes clamps of the effector to width of ~10 mm
+        Robot puts clamps of the effector to width from input
+        
+        :param width: Width to send
         """
-
-        self.send_command('grab')
+        
+        self.send_command(f'grab {abs(width) % 30}')
 
     def release(self) -> None:
         """
@@ -80,3 +91,43 @@ class Interface:
         """
 
         self.send_command('release')
+
+    def load_up(self, x: int, y: int, z: int, obj_width: int) -> List[float]:
+        """
+        Robot picks up an object with middle point coordinates and width
+        from input. Then the robot puts the object to the cargo box and
+        resets arm to default position
+        
+        :param x: Object middle point X-axis coordinate
+        :param y: Object middle point Y-axis coordinate
+        :param z: Object middle point Z-axis coordinate
+        :param obj_width: Width of the object
+        :return: List of floats - angles of each joint in robotic arm
+        after it finished all movements
+        """
+        
+        self.send_command(f'loadUp {x} {y} {z} {obj_width}')
+        self.wrapper.expect('Servo angles ')
+        output = self.wrapper.readline().decode().split()
+
+        return list(map(float, output))
+
+    def try_point(self, x: int, y: int, z: int) -> int:
+        """
+        Robot calculates if a point with coordinates from input is a valid
+        target point for the effector
+        
+        :param x: Target point X-axis coordinate
+        :param y: Target point Y-axis coordinate
+        :param z: Target point Z-axis coordinate
+        :return: 0 - point is not valid
+                 1 - point is valid
+                 2 - point is too close to the current effector position
+        """
+        
+        self.send_command(f'try {x} {y} {z}')
+        self.wrapper.expect('Result ')
+        
+        output = self.wrapper.readline().decode().strip()
+        
+        return int(output)
