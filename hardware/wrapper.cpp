@@ -81,38 +81,51 @@ int main(int argc, char *argv[]) {
             robotMotion.ungrip(robot, fd);
         }
         else if (command == "loadUp") {
+            // Moves the arm to the designed coords of the object 
+            // and then brings it into the cargo space
             std::cin >> x >> y >> z >> obj_width;
             
             cv::Point3i target_point(x, y, z);
             cv::Point3i over_target_point(x, y + 20, z);
-
+            
+            // Moves the arm above the object
             robotMotion.moveArm(current_effector_position, over_target_point, robot, fd);
             robotMotion.moveArm(over_target_point, target_point, robot, fd);
             cv::waitKey(500);
+            
+            // Grabs the object 
             robotMotion.grip(robot, fd, obj_width);
             cv::waitKey(500);
+            
+            // Brings it to the cargo space and releases it
             robotMotion.moveArm(target_point, robotMotion.cargoPoint, robot, fd);
             cv::waitKey(500);
             robotMotion.ungrip(robot, fd);
             cv::waitKey(500);
+            
+            // Moves the arm to the default position
             robotMotion.moveArm(robotMotion.cargoPoint, robotMotion.baseArmPoint, robot, fd);
             
             current_effector_position = robotMotion.baseArmPoint;
             cout_servos_degrees(robot);
         }
         else if (command == "try") {
+            // Tries if the arm can reach the given point
             std::cin >> x >> y >> z;
             cv::Point3i target_point(x, y, z);
             
             std::cout << "Result ";
             
+            // Checks if the arm isn't already at the position
             if (robotMotion.getDistance(current_effector_position, target_point) < 10) {
                 std::cout << 2 << endl;
             }
             else {
+                // Calculates the path
                 vector<cv::Point3i> path = robotMotion.calculatePath(current_effector_position, target_point);
                 bool point_is_good = true;
                 
+                // Tries if the arm can reach every point on the path 
                 for (int i = 1; i < path.size(); i++) {
                     int* prevArm = robot->getServoPositions();
                     int* nextArm = robot->getServoPositions();
@@ -124,13 +137,13 @@ int main(int argc, char *argv[]) {
                         q2Degree++;
                         nextArm = robot->getServoPositions();
                     }
-
+                    
                     if (!inverseResult) {
                         point_is_good = false;
                         break;
                     }
                 }
-                
+                // Depending, if the path is reachable returns 0 or 1
                 if (point_is_good) {
                     
                     std::cout << 1 << endl;
