@@ -7,48 +7,76 @@ class JankoHrasko(DHRobot):
     def __init__(self, **kwargs):
         deg = math.pi / 180
 
+        # L1 = RevoluteDH(
+            # a=0,
+            # alpha=0,
+            # d=48
+        # )
+
+        # L2 = RevoluteDH(
+            # a=0,
+            # alpha=-90 * deg,
+            # d=125,
+            # qlim=[-180 * deg, 0]
+        # )
+
+        # L3 = RevoluteDH(
+            # a=147,
+            # alpha=0,
+            # d=0,
+            # qlim=[0, 90 * deg]
+        # )
+
+        # # L4 = RevoluteDH(
+            # # a=182,
+            # # alpha=0,
+            # # d=0,
+            # # qlim=[0, 147 * deg]
+        # # )
+
+        # L5 = RevoluteDH(
+            # a=56,
+            # alpha=90 * deg,
+            # d=0,
+            # qlim=[0, 125 * deg]
+        # )
+
+        # L6 = RevoluteDH(
+            # a=58,
+            # alpha=0,
+            # d=0
+        # )
+        
         L1 = RevoluteDH(
             a=0,
-            alpha=0,
-            d=48
+            alpha=90 * deg,
+            d=75
         )
 
         L2 = RevoluteDH(
-            a=0,
-            alpha=-90 * deg,
-            d=19,
-            qlim=[-180 * deg, 0]
+            a=125,
+            alpha=0,
+            d=0,
+            # qlim=[-180 * deg, 0]
         )
 
         L3 = RevoluteDH(
-            a=147,
+            a=118,
             alpha=0,
-            d=0,
-            qlim=[0, 90 * deg]
+            d=0
+            # qlim=[0, 90 * deg]
         )
 
         L4 = RevoluteDH(
-            a=182,
-            alpha=0,
-            d=0,
-            qlim=[0, 147 * deg]
-        )
-
-        L5 = RevoluteDH(
-            a=56,
-            alpha=90 * deg,
-            d=0,
-            qlim=[0, 125 * deg]
-        )
-
-        L6 = RevoluteDH(
-            a=58,
+            a=45,
             alpha=0,
             d=0
+            # qlim=[0, 147 * deg]
         )
 
+
         super().__init__(
-            links=[L1, L2, L3, L4, L5, L6],
+            links=[L1, L2, L3, L4],
             name='JankoHrasko',
             **kwargs
         )
@@ -59,7 +87,7 @@ if __name__ == '__main__':
     print(robot)
 
     deg = math.pi / 180
-    q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
+    q = [0 * deg, 45 * deg, -45 * deg, -45 * deg]
 
     print(robot.islimit(q))
     robot.plot(

@@ -90,13 +90,13 @@ with col_1:
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 
     with col_m1:
-        st.button('🠕', on_click=conn.move_fwd)
+        st.button('fwd', on_click=conn.move_fwd)
     with col_m2:
-        st.button('🠗', on_click=conn.move_bwd)
+        st.button('bwd', on_click=conn.move_bwd)
     with col_m3:
-        st.button('🠔', on_click=conn.move_left)
+        st.button('left', on_click=conn.move_left)
     with col_m4:
-        st.button('🠖', on_click=conn.move_right)
+        st.button('right', on_click=conn.move_right)
 
     html(
         """
@@ -104,10 +104,10 @@ with col_1:
         const doc = window.parent.document;
         buttons = Array.from(doc.querySelectorAll('button[kind=secondary]'));
         
-        const fwd_btn = buttons.find(el => el.innerText === '🠕');
-        const bwd_btn = buttons.find(el => el.innerText === '🠗');
-        const left_btn = buttons.find(el => el.innerText === '🠔');
-        const right_btn = buttons.find(el => el.innerText === '🠖');
+        const fwd_btn = buttons.find(el => el.innerText === 'fwd');
+        const bwd_btn = buttons.find(el => el.innerText === 'bwd');
+        const left_btn = buttons.find(el => el.innerText === 'left');
+        const right_btn = buttons.find(el => el.innerText === 'right');
         
         doc.addEventListener('keydown', function(e) {
             switch (e.code) {
@@ -137,7 +137,7 @@ if 'robot' not in st.session_state:
     st.session_state['robot'] = JankoHrasko()
 
 if 'joint_config' not in st.session_state:
-    st.session_state['joint_config'] = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
+    st.session_state['joint_config'] = [0 * deg, 45 * deg, -45 * deg, -45 * deg]
     st.session_state['robot'].plot(
         q=st.session_state['joint_config'],
         backend='pyplot',
@@ -174,8 +174,8 @@ with col_3:
 
     while True:
         frame = st.session_state['video_stream'].recv()
-
+        
         if frame is None:
             frame = np.random.randint(0, 100, size=(64, 64))
-
+        
         viewer.image(frame, width=600)

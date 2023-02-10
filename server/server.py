@@ -45,7 +45,7 @@ class ThreadedServer:
 
         # Default joint configuration
         deg = math.pi / 180
-        self.joint_config = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
+        self.joint_config = [0 * deg, 45 * deg, -45 * deg, -45 * deg]
 
     def listen(self) -> None:
         """
@@ -97,7 +97,10 @@ class ThreadedServer:
 
                         # Check if coordinates are valid
                         if self.hardware.try_point(x, y, z) == 1:
-                            self.joint_config = self.hardware.move_arm(x, y, z)
+                            j_config = self.hardware.move_arm(x, y, z)[1:][::-1]
+                            j_config[2] *= (-1)
+                            j_config[3] *= (-1)
+                            self.joint_config = j_config
 
                     elif func == 'get_joint_config':
                         # If `get_joint_config` request is received

@@ -11,7 +11,7 @@ class Interface:
         :param port: Communication port with the main circuit
         """
 
-        self.wrapper = pexpect.spawn(f'./wrapper {port}')
+        self.wrapper = pexpect.spawn(f'./hardware/wrapper {port}')
 
     def send_command(self, command: str) -> None:
         """
