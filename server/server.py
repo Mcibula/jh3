@@ -101,6 +101,18 @@ class ThreadedServer:
                             j_config[2] *= (-1)
                             j_config[3] *= (-1)
                             self.joint_config = j_config
+                    
+                    elif func == 'load_up':
+                        # If `load_up` request is received
+                        # Extract coordinates and execute while receiving a new joint config
+                        x, y, z = map(int, cmd[1:])
+
+                        # Check if coordinates are valid
+                        if self.hardware.try_point(x, y, z) == 1:
+                            j_config = self.hardware.load_up(x, y, z)[1:][::-1]
+                            j_config[2] *= (-1)
+                            j_config[3] *= (-1)
+                            self.joint_config = j_config
 
                     elif func == 'get_joint_config':
                         # If `get_joint_config` request is received
@@ -123,4 +135,4 @@ class ThreadedServer:
 
 if __name__ == '__main__':
     # Start the server
-    ThreadedServer().listen()
+    ThreadedServer(host='192.168.241.87').listen()

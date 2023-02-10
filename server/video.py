@@ -10,8 +10,8 @@ stream = VideoGear(
 ).start()
 
 server = NetGear(
-    # address='127.0.0.1',
-    # port=(65433, 65434),
+    address='192.168.241.223',
+    port='65433',
     # protocol='tcp',
     pattern=2,
     logging=True

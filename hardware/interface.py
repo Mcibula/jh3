@@ -92,7 +92,7 @@ class Interface:
 
         self.send_command('release')
 
-    def load_up(self, x: int, y: int, z: int, obj_width: int) -> List[float]:
+    def load_up(self, x: int, y: int, z: int, obj_width: int = 10) -> List[float]:
         """
         Robot picks up an object with middle point coordinates and width
         from input. Then the robot puts the object to the cargo box and
