@@ -15,7 +15,7 @@ st.set_page_config(layout='wide')
 st.title('Janko Hraško Controller')
 
 if 'conn' not in st.session_state:
-    st.session_state['conn'] = Connection()
+    st.session_state['conn'] = Connection(host='192.168.241.87')
 
 if 'video_stream' not in st.session_state:
     options = {
@@ -25,8 +25,8 @@ if 'video_stream' not in st.session_state:
     }
 
     st.session_state['video_stream'] = NetGear(
-        # address='127.0.0.1',
-        # port='65433',
+        address='192.168.241.223',
+        port='65433',
         # protocol='tcp',
         receive_mode=True,
         pattern=2,
@@ -35,7 +35,7 @@ if 'video_stream' not in st.session_state:
     )
 
 conn = st.session_state['conn']
-col_1, col_2, col_3 = st.columns(3)
+col_1, col_3 = st.columns(2)
 
 with col_1:
     st.subheader('Effector position')
@@ -43,17 +43,17 @@ with col_1:
     if 'effector_coords' not in st.session_state:
         st.session_state['effector_coords'] = (0, 0, 0)
 
-    slider_x = st.slider('X')
-    slider_y = st.slider('Y')
-    slider_z = st.slider('Z')
+    coord_x = st.number_input('X', step=1)
+    coord_y = st.number_input('Y', step=1)
+    coord_z = st.number_input('Z', step=1)
 
-    col_b1, col_b2 = st.columns(2)
+    col_b1, col_b2, col_b3 = st.columns(3)
 
     with col_b1:
         submit = st.button('Execute')
 
         if submit:
-            st.session_state['effector_coords'] = (slider_x, slider_y, slider_z)
+            st.session_state['effector_coords'] = (coord_x, coord_y, coord_z)
             conn.send_coords(st.session_state['effector_coords'])
 
     with col_b2:
@@ -64,26 +64,12 @@ with col_1:
             btn_container.empty()
             grab = btn_container.button('Release', on_click=conn.release)
 
-    with st.expander('Precise control'):
-        with st.form(key='effector'):
-            coord_x = st.number_input(
-                'X',
-                value=slider_x
-            )
-            coord_y = st.number_input(
-                'Y',
-                value=slider_y
-            )
-            coord_z = st.number_input(
-                'Z',
-                value=slider_z
-            )
+    with col_b3:
+        submit = st.button('Load up')
 
-            submit = st.form_submit_button(label='Execute')
-
-            if submit:
-                st.session_state['effector_coords'] = (coord_x, coord_y, coord_z)
-                conn.send_coords(st.session_state['effector_coords'])
+        if submit:
+            st.session_state['effector_coords'] = (coord_x, coord_y, coord_z)
+            conn.load_up(st.session_state['effector_coords'])
 
     st.subheader('Base movement')
 
@@ -136,37 +122,37 @@ deg = math.pi / 180
 if 'robot' not in st.session_state:
     st.session_state['robot'] = JankoHrasko()
 
-if 'joint_config' not in st.session_state:
-    st.session_state['joint_config'] = [0 * deg, 45 * deg, -45 * deg, -45 * deg]
-    st.session_state['robot'].plot(
-        q=st.session_state['joint_config'],
-        backend='pyplot',
-        block=False,
-        jointaxes=True,
-        eeframe=True,
-        shadow=False
-    )
-    st.session_state['arm_fig'] = plt.gcf()
+# if 'joint_config' not in st.session_state:
+#     st.session_state['joint_config'] = [0 * deg, 45 * deg, -45 * deg, -45 * deg]
+#     st.session_state['robot'].plot(
+#         q=st.session_state['joint_config'],
+#         backend='pyplot',
+#         block=False,
+#         jointaxes=True,
+#         eeframe=True,
+#         shadow=False
+#     )
+#     st.session_state['arm_fig'] = plt.gcf()
 
 # q = [0 * deg, 0 * deg, 0 * deg, 45 * deg, 45 * deg, 0 * deg]
-q = conn.get_joint_config()
+# q = conn.get_joint_config()
 
-if q and q != st.session_state['joint_config']:
-    st.session_state['joint_config'] = q
+# if q and q != st.session_state['joint_config']:
+#     st.session_state['joint_config'] = q
+#
+#     st.session_state['robot'].plot(
+#         q=st.session_state['joint_config'],
+#         backend='pyplot',
+#         block=False,
+#         jointaxes=True,
+#         eeframe=True,
+#         shadow=False
+#     )
+#     st.session_state['arm_fig'] = plt.gcf()
 
-    st.session_state['robot'].plot(
-        q=st.session_state['joint_config'],
-        backend='pyplot',
-        block=False,
-        jointaxes=True,
-        eeframe=True,
-        shadow=False
-    )
-    st.session_state['arm_fig'] = plt.gcf()
-
-with col_2:
-    st.subheader('Arm position')
-    st.pyplot(st.session_state['arm_fig'])
+# with col_2:
+#     st.subheader('Arm position')
+#     st.pyplot(st.session_state['arm_fig'])
 
 with col_3:
     st.subheader('Camera')

@@ -67,8 +67,13 @@ class Connection:
         print('Move RIGHT')
 
     def send_coords(self, coords: Tuple[int, int, int]) -> None:
-        x, y, z = coords
+        x, y, z = map(int, coords)
         self._send(f'move_arm {x} {y} {z}'.encode())
+        print(coords)
+
+    def load_up(self, coords: Tuple[int, int, int]) -> None:
+        x, y, z = map(int, coords)
+        self._send(f'load_up {x} {y} {z}'.encode())
         print(coords)
 
     def grip(self) -> None:
