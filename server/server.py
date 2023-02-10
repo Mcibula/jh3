@@ -40,7 +40,7 @@ class ThreadedServer:
             'base_left': self.hardware.turn_left,
             'base_right': self.hardware.turn_right,
             'effector_grip': self.hardware.grab,
-            'effector_release': self.hardware.release,
+            'effector_release': self.hardware.release
         }
 
         # Default joint configuration
@@ -94,7 +94,10 @@ class ThreadedServer:
                         # If `move_arm` request is received
                         # Extract coordinates and execute while receiving a new joint config
                         x, y, z = map(int, cmd[1:])
-                        self.joint_config = self.hardware.move_arm(x, y, z)
+
+                        # Check if coordinates are valid
+                        if self.hardware.try_point(x, y, z) == 1:
+                            self.joint_config = self.hardware.move_arm(x, y, z)
 
                     elif func == 'get_joint_config':
                         # If `get_joint_config` request is received

@@ -5,6 +5,7 @@ stream = VideoGear(
     enablePiCamera=False,
     source=0,
     resolution=(352, 240),
+    framerate=10,
     colorspace='COLOR_BGR2RGB'
 ).start()
 
